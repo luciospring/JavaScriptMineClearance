@@ -1,8 +1,5 @@
 JavaScriptMineClearance
 =======================
-
-超简单JS扫雷
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -59,11 +56,13 @@ JavaScriptMineClearance
                 alert("你失败了");
             }
             else {
-                btn.value = walei(button.id);
-                btn.style.backgroundColor = "green";
+                guangDuYouXian = [];
+                walei(button.id);
+
             }
         }
 
+        var guangDuYouXian = [];
         //计算周围的累
         function walei(btnID) {
             var dls = 0;//地雷数
@@ -81,19 +80,30 @@ JavaScriptMineClearance
             dls += Number(getElementyValue(around[6]));
             dls += Number(getElementyValue(around[7]));
 
-			return dls;
+            //return dls;
             if (dls == 0) {
                 for (var i = 0; i < around.length; i++) {
-                    walei(around[i]);
+                    var element = around[i];
+                    if (guangDuYouXian.indexOf(element) < 0) {
+                        setGreenElement(btnID, dls);
+                        guangDuYouXian.push(element);
+                        walei(element);
+                    }
                 }
             }
             else {
-                return dls;
-
+                setGreenElement(btnID, dls);
             }
         }
 
-        //通过
+        //将这块区域设置成没雷的状态
+        function setGreenElement(btnID, leiNum) {
+            var btn = document.getElementById(btnID);;
+            btn.value = leiNum;
+            btn.style.backgroundColor = "green";
+        }
+
+        //通过名字找到元素，判断该元素如果是雷则返回1
         function getElementyValue(elementName) {
             var btn = document.getElementById(elementName);
             if (btn && (btn.value == landmine || btn.value == "雷"))
@@ -102,7 +112,7 @@ JavaScriptMineClearance
                 return 0;
         }
 
-        //通过元素代号 x1-x2 获得在这个元素周边的8个元素代号，返回长度为8的数组
+        //通过元素代号 x1-x2 获得在这个元素周边的元素代号，会去除undefined
         function getAround(x1, x2) {
             x1 = Number(x1);
             x2 = Number(x2);
